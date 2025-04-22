@@ -19,8 +19,8 @@ def dijkstra_rdd(sc: SparkContext, filename, source):
     distances = sc.parallelize([(i, INF) for i in range(num_nodes)]) \
                   .map(lambda x: (x[0], 0) if x[0] == source else x).cache()
     
-    # set the number of partitions to 3 times the number of cores
-    num_partitions = sc.defaultParallelism * 3
+    # set the number of partitions equal to the number of cores
+    num_partitions = sc.defaultParallelism
 
     converged = False
     while not converged:
@@ -43,6 +43,8 @@ if __name__ == "__main__":
     source_node = 0
 
     result = dijkstra_rdd(sc, input_path, source_node)
+
+    print(f"Shortest distances from node {source_node}:")
 
     for node, distance in result.collect():
         print(f"Node {node}: {'INF' if distance == INF else distance}")
